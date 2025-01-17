@@ -19,15 +19,13 @@ Matryoshka 表示：v2 允许用户将文本和图像嵌入的输出维度从 10
 
 | Model              |
 |--------------------|
-| Qwen/Qwen2-VL-2B-Instruct  |
-| Qwen/Qwen2-VL-7B-Instruct  |
-| Qwen/Qwen2-VL-2B  |
-| Qwen/Qwen2-VL-7B  |
+| jinaai/jina_clip_v2 |
 
-注意：与huggingface权重同名，但权重为paddle框架的Tensor，使用`xxx.from_pretrained("Qwen/Qwen2-VL-2B-Instruct")`即可自动下载该权重文件夹到缓存目录。
+注意：与huggingface权重同名，但权重为paddle框架的Tensor，使用`xxx.from_pretrained("jinaai/jina_clip_v2")`即可自动下载该权重文件夹到缓存目录。
 
 
 ## 2 环境准备
+
 1）[安装PaddlePaddle](https://github.com/PaddlePaddle/PaddleMIX?tab=readme-ov-file#3-%EF%B8%8F%E5%AE%89%E8%A3%85paddlepaddle)
 - **python >= 3.10**
 - **paddlepaddle-gpu 要求是3.0.0b2或develop版本**
@@ -60,99 +58,23 @@ python -m pip install paddlenlp==3.0.0b3 --user
 sh build_env.sh
 ```
 
-> 注：
-* 请确保安装了以上依赖，否则无法运行。同时，需要安装 paddlemix/external_ops 下的自定义OP, `python setup.py install`。如果安装后仍然找不到算子，需要额外设置PYTHONPATH
-* (默认开启flash_attn)使用flash_attn 要求A100/A800显卡或者H20显卡。V100请用float16推理。
+## 3 快速开始
 
-## 3 推理预测
-
-### a. 单图预测
+### 推理
 ```bash
-CUDA_VISIBLE_DEVICES=0 python paddlemix/examples/qwen2_vl/single_image_infer.py
+# 图片理解
+CUDA_VISIBLE_DEVICES=0 python paddlemix/examples/jina_clip_v2/run_inference.py \
 ```
-
-### b. 多图预测
-```bash
-CUDA_VISIBLE_DEVICES=0 python paddlemix/examples/qwen2_vl/multi_image_infer.py
-```
-
-### c. 视频预测
-```bash
-CUDA_VISIBLE_DEVICES=0 python paddlemix/examples/qwen2_vl/video_infer.py
-```
-
-## 4 模型微调
-
-### 4.1 小型示例数据集
-
-PaddleMIX团队整理了`chartqa`数据集作为小型的示例数据集，下载链接为：
-
-```bash
-wget https://paddlenlp.bj.bcebos.com/models/community/paddlemix/benchmark/playground.tar # 1.0G
-```
-playground/目录下包括了图片目录`data/chartqa/`和标注目录`opensource_json/`，详见`paddlemix/examples/qwen2_vl/configs/demo_chartqa_500.json`。
-
-
-### 4.2 大型公开数据集
-
-大型的数据集选择6个公开的数据集组合，包括`dvqa`、`chartqa`、`ai2d`、`docvqa`、`geoqa+`、`synthdog_en`，详见`paddlemix/examples/qwen2_vl/configs/baseline_6data_330k.json`
-
-PaddleMIX团队整理后的下载链接为：
-```bash
-wget https://paddlenlp.bj.bcebos.com/datasets/paddlemix/playground.tar # 50G
-wget https://paddlenlp.bj.bcebos.com/datasets/paddlemix/playground/opensource_json.tar
-```
-
-注意：若先下载了示例数据集的`playground.tar`解压了，此处需删除后，再下载公开数据集的`playground.tar`并解压，opensource_json.tar需下载解压在playground/目录下，opensource_json 里是数据标注的json格式文件。
-
-### 4.3 微调命令
-
-注意：此微调训练为语言模型微调，冻结视觉编码器而放开LLM训练，2B模型全量微调训练的显存大小约为30G，7B模型全量微调训练的显存大小约为75G。
-
-```bash
-# 2B
-sh paddlemix/examples/qwen2_vl/shell/baseline_2b_bs32_1e8.sh
-
-# 2B lora
-sh paddlemix/examples/qwen2_vl/shell/baseline_2b_lora_bs32_1e8.sh
-
-# 7B
-sh paddlemix/examples/qwen2_vl/shell/baseline_7b_bs32_1e8.sh
-
-# 7B lora
-sh paddlemix/examples/qwen2_vl/shell/baseline_7b_lora_bs32_1e8.sh
-```
-
-注意：微调2b模型的运行示例如下：
-![运行示例](../../demo_images/qwen2-vl-2b-lora-ft.png)
-
-
-### 4.4 微调后使用
-
-同按步骤3中的模型推理预测，只需将`paddlemix/examples/qwen2_vl/single_image_infer.py`中的`--model_path`参数修改为微调后的模型路径即可。
-
-```bash
-CUDA_VISIBLE_DEVICES=0 python paddlemix/examples/qwen2_vl/single_image_infer.py
-```
-
-### 5 高性能推理优化
-
-[Paddle高性能推理优化后](../../../deploy/qwen2_vl/)，测试结果如下：
-
-- 在 NVIDIA A800-80GB 上测试的单图端到端速度性能如下：
-
-| model                  | Paddle Inference|    PyTorch   | Paddle 动态图 |
-| ---------------------- | --------------- | ------------ | ------------ |
-| Qwen2-VL-2B-Instruct   |      1.053 s     |     2.086 s   |   5.766 s   |
-| Qwen2-VL-7B-Instruct   |      2.293 s     |     3.132 s   |   6.221 s   |
-
-
 
 ## 参考文献
 ```BibTeX
-@article{Jina-CLIP-v2,
-  title={Jina-CLIP-v2},15
-  author={Jina-AI},
-  year={2024}
+@misc{koukounas2024jinaclipv2multilingualmultimodalembeddings,
+      title={jina-clip-v2: Multilingual Multimodal Embeddings for Text and Images}, 
+      author={Andreas Koukounas and Georgios Mastrapas and Bo Wang and Mohammad Kalim Akram and Sedigheh Eslami and Michael Günther and Isabelle Mohr and Saba Sturua and Scott Martens and Nan Wang and Han Xiao},
+      year={2024},
+      eprint={2412.08802},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2412.08802}, 
 }
 ```

@@ -12,7 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .configuration_jina_clip_v2 import *
-from .modeling_jina_clip_v2 import *
 
 

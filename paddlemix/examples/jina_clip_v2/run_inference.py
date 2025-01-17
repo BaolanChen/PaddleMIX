@@ -40,19 +40,17 @@ image_path = 'paddlemix/demo_images/jina_clip_v2_bench.jpg'
 truncate_dim = 512
 
 # Encode text and images
-# 图像编码器
+# 文本编码器
 text_embeddings = model.encode_text(sentences, truncate_dim=truncate_dim)
 
-# 文本编码器
-image_embeddings = model.encode_image(
-    image_urls, truncate_dim=truncate_dim
-)  # also accepts PIL.Image.Image, local filenames, dataURI
+# 图像编码器
+image_embeddings = model.encode_image(image_urls, truncate_dim=truncate_dim)  
+# also accepts PIL.Image.Image, local filenames, dataURI
 
 # Encode query text
 query = 'beautiful sunset over the beach' # English
-query_embeddings = model.encode_text(
-    query, task='retrieval.query', truncate_dim=truncate_dim
-)
+
+query_embeddings = model.encode_text(query, task='retrieval.query', truncate_dim=truncate_dim)
 
 # Text to Image
 print('En -> Img: ' + str(query_embeddings @ image_embeddings[0].T))

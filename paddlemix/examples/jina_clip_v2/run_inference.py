@@ -34,7 +34,8 @@ sentences = [
 # Public image URLs or PIL Images
 image_urls = ['https://i.ibb.co/nQNGqL0/beach1.jpg', 'https://i.ibb.co/r5w8hG8/beach2.jpg']
 
-image_path = 'paddlemix/demo_images/jina_clip_v2_bench.jpg'
+image_path = ['paddlemix/demo_images/jina_clip_v2_bench.jpg', 'paddlemix/demo_images/jina_clip_v2_bench.jpg']
+
 
 # Choose a matryoshka dimension, set to None to get the full 1024-dim vectors
 truncate_dim = 512
